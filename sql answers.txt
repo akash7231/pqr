@@ -1,0 +1,341 @@
+1.select * from emp;
+---------------------------------------------
+2. select distinct job from emp;
+----------------------------------------
+3.select * from emp where hiredate<'01-JAN-81';
+------------------------------------------------------
+4. select * from emp where deptno in(10,20);
+---------------------------------------------------------
+5.select * from emp where deptno=20 and lower(job) like 'clerk';
+------------------------------------------------------------------
+6 . select * from emp where lower(ename) like 'smith';
+-----------------------------------------------------------------
+7. select ename,empno,sal*1.2 new from emp where sal*1.2>3000;
+----------------------------------------------------------------
+8.select s.grade,e.ename,e.empno,e.sal,e.hiredate from salgrade s,emp e where e.sal between s.losal and s.hisal and e.deptno in(10,30) and s.grade !=4 and e.hiredate<'31-dec-82';
+-------------------------------------------------------------
+9.  select * from emp where to_char(hiredate,'dd')<15;
+--------------------------------------------------------------
+10. select * from emp where lower(job) like 'manager';
+--------------------------------------------------------------
+11.
+
+select ename||'('||job||')' from emp where ename in('SMITH','LOYEE','ALLEN') and job in ('CLERK','SALESMAN');
+
+----------------------------------------------------------
+12. select distinct deptno,job from emp;
+------------------------------------------------------
+13. select * from emp where lower(ename) like 'blake';
+-----------------------------------------------------------
+14.select * from emp where lower(job) like 'clerk';
+--------------------------------------------------------
+15.select empno,sal,comm from emp;
+-----------------------------------------------------------
+16. select * from emp where hiredate='01-MAY-81';
+--------------------------------------------------------------
+17. select * from emp where lower(job) like 'manager';
+---------------------------------------------------------
+18. select * from emp where lower(job) in ('manager','clerk');
+----------------------------------------------------------------
+19. select * from emp where hiredate in ('01-MAY-81','17-NOV-81','30-DEC-81');
+----------------------------------------------------------------
+20.select * from emp where to_char(hiredate,'yyyy')=1981;
+--------------------------------------------------------------
+21.select * from emp where sal between 2300 and 4000;
+----------------------------------------------------------------
+22. select * from emp where mgr in(7369,7890,7654,7900);
+----------------------------------------------------------------
+30.select * from emp where lower(ename) !='james';
+
+
+
+GROUPBY AND HAVING CLAUSE
+------------------------------------------------------------
+125.select count(*) from emp group by deptno,job;
+
+---------------------------------------------------------
+126.  select mgr,count(ename) from emp group by mgr order by count(ename);
+--------------------------------------------------------------
+127.
+select s.grade,count(s.grade),max(e.sal) from emp e,salgrade s where e.sal between s.losal and s.hisal group by s.grade ;
+-----------------------------------------------------
+
+
+select d.dname,s.grade,count(s.grade) from emp e,salgrade s,dept d where e.sal between s.losal and s.hisal and (select * from emp where lower(job) like 'clerk' >=2 ) group by s.grade,d.dname ;
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+129.select ename,sal from emp e where e.sal=(select max(sal) from emp f where e.deptno=f.deptno);
+----------------------------------------------------------------------------------------------------------------
+130.select count(ename) from emp group by deptno having count(ename) >3;
+----------------------------------------------------------------------------------------------
+131. select d.dname,count(d.dname) from emp e,dept d where e.deptno=d.deptno group by dname having c
+ount(dname)>3;
+
+----------------------------------------------------------------------------------------------------------------
+132.select avg(sal),avg(sal+comm) from emp group by job;
+
+---------------------------------------------------------------------------------------------
+133. select min(sal) from emp group by job order by min(sal);
+--------------------------------------------------------------------------------------------------
+134.select max(sal) from emp group by job order by max(sal) desc;
+-----------------------------------------------------------------------------------------
+136.select ename,sal,deptno from emp e where e.sal>(select avg(f.sal) from emp f where e.deptno=f.deptno);
+
+----------------------------------------------------------------------------------------------------------------------
+137.select deptno from emp group by deptno having count(ename)=0;
+----------------------------------------------------------------------------------------
+138.select count(ename),avg(sal),deptno,job from emp group by deptno,job;
+
+----------------------------------------------------------------------------------------------------------------
+139.select avg(sal) from emp group by job having lower(job) not like 'president';
+
+----------------------------------------------------------------------------------------------------------------
+
+Sub Queries and Co related Sub queries
+
+----------------------------------------------------
+------------------------------------------------
+
+140. select * from emp where lower(job) like 'manager';
+------------------------------------------------------------------------
+141.select ename,empno,job,hiredate,trunc((sysdate-hiredate)/365) exp  from emp where lower(job) like 'manager';
+--------------------------------------------------------------------------------------------------------------------------------------------
+142. select e.ename,s.grade,e.job  from emp e,salgrade s where e.sal between s.losal and s.hisal and (s.grade in (2,3) or (s.grade in (4,5) and  lower(e.job) in('analyst','manager')));
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+143.select e.ename,e.job,e.hiredate,e.sal,d.loc,s.grade,d.dname from emp e,dept d ,salgrade s where e.deptno=d.deptno and (e.sal between s.losal and s.hisal and s.grade between 2 and 4) and (d.dname not like 'OP%' and d.dname not like '%S') and(e.job like '%A%' and to_char(hiredate,'yy')='81' ) and ( e.sal  not like '%00' ) order by s.grade ;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+144.select * from emp where sal>(select sal from emp where lower(ename) like 'blake');
+
+---------------------------------------------------------------------------------------------------------------------------------------
+145.select * from emp where job like (select job from emp where lower(ename) like 'allen');
+
+------------------------------------------------------------------------------------------------------------------------------------------
+146.
+select  ename,job,hiredate,sal,trunc((sysdate-hiredate)/365) from emp where trunc((sysdate-hiredate)/365)>(select trunc((sysdate-hiredate)/365) from emp where lower(ename) like 'king');
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+147.select * from  emp where deptno=20 and upper(job)  in (select job from emp where deptno=10);
+
+-------------------------------------------------------------------------------------------------------------------------------
+148. select * from emp where sal in(select sal from emp where lower(ename) in ('ford','smith')) order by sal desc;
+ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+149. select * from emp where upper(job) like (select job from emp where lower(ename) like 'miller') or sal>(select sal from emp where lower(ename) like 'allen');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+150.select * from emp where sal  in (select sal+comm from emp where lower(job) like 'salesman');
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+151.
+
+SQL> select e.ename,e.job,e.hiredate,e.sal,d.loc from emp e,dept d where((sysdate-e.hiredate)/365>(select (sysdate-e.hiredate)/365 from emp e where (lower(e.ename) like 'blake' ))and (lower(d.loc) in ('chicago','boston')and e.deptno=d.deptno));
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+153.select * from emp where upper(job) in (select job from emp where lower(ename) in ('smith','allen'));
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+154.  select job from emp where upper(job) not in (select job from emp where deptno=20);               
+-------------------------------------------------------------------------------------------------------------------------------------------
+155.select * from emp where sal=(select max(sal) from emp);        
+----------------------------------------------------------------------------------------------------------------------------------------
+156.   select * from emp e where e.sal=(select max(f.sal) from emp f,dept d  group by d.dname having lower(d.dname) like 'sales'); 
+
+  select e.ename,e.job,e.sal,e.hiredate,e.deptno,d.loc from emp e,dept d where e.sal=(select max(f.sal) from emp f,dept d  where lower(d.dname) like 'sales')and e.deptno=d.deptno; 
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+157.
+select e.ename,e.sal,e.deptno,e.hiredate from emp e,dept d,salgrade s where (e.sal between s.losal and s.hisal and s.grade =3) and (e.deptno=d.deptno and lower(d.loc) like 'chicago') and (e.hiredate between '03-jan-81' and sysdate);
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+158.
+select e.ename,e.sal,e.deptno,e.hiredate from emp e where (sysdate-hiredate)/365 > any(select (sysdate-hiredate)/365 from emp f where(f.hiredate between '03-jan-81' and sysdate )) and  (e.mgr=(select empno from emp a where lower(a.ename) like 'king'));
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+159.  select e.ename,e.sal,e.hiredate,e.job,s.grade from emp e,dept d,salgrade s where e.deptno=d.deptno and lower(d.loc) like 'new york' and (e.sal between s.losal and s.hisal and s.grade in(3,4,5)) and e.sal >( select max(sal) from emp e,dept d where lower(d.loc) like 'chicago' and lower(e.job) like 'president' )and e.mgr <>(select empno from emp where lower(ename) like 'king');
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+160.select ename,empno,job,hiredate,(sysdate-hiredate)/365 exp  from emp where (sysdate-hiredate)/365>(select avg((sysdate-hiredate)/365) from emp ) and to_char(hiredate,'yyyy')='1981';
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+161.select ename,empno,job,hiredate,(sysdate-hiredate)/365 exp  from emp where (sysdate-hiredate)/365>(select avg((sysdate-hiredate)/365) from emp ) and to_char(hiredate,'yyyy')='1981' and upper(job) like (select job from emp where hiredate=(select min(hiredate) from emp));
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+162.select e.ename,e.empno,e.job,e.hiredate,s.grade,(sysdate-e.hiredate)/365  AS exp   from emp e ,salgrade s where  e.mgr=(select a.empno from emp a where lower(a.ename) like 'king') and  (e.sal between s.losal and s.hisal and s.grade >3) and months_between(sysdate,e.hiredate)/12>(select avg(months_between(sysdate,hiredate)/12 ) from emp);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+163. select * from emp where sal >(select avg(sal) from emp where deptno=20);
+----------------------------------------------------------------------------------------------------------------------------------
+164.select e.ename from emp e,emp a where e.mgr=a.empno and lower(a.ename) like 'jones';
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+165.select * from emp e,dept d where lower(d.dname) not like 'sales';
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+166.select e.ename,e.job,d.dname,d.loc from emp e,dept d where lower(e.job) like 'manager';
+------------------------------------------------------------------------------------------------------------------------------------------------------
+167.select * from emp where sal=(  select max(sal)+min(sal)/2 from emp   );
+-----------------------------------------------------------------------------------------------------------------------------------------------
+168.select * from emp  where lower(job) like 'manager' and sal =any (select avg(e.sal)  from emp e,emp a where e.mgr=a.empno group by e.mgr);
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+169.select * from emp where (sal+comm) > any(select sal from emp);
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+171.select * from emp a where sal>(select sal from  emp e where e.empno=a.mgr and lower(e.job) like 'manager');
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+170.select ename,(select avg(sal) from emp e where e.deptno=f.deptno) from emp f;
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+172.select  e.ename,e.job,e.sal ,e.mgr  from emp e where lower(e.job) like 'manager' and e.mgr != (select empno from emp a where lower(a.job) like 'president');
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+173.select e.ename,e.job,e.job,e.hiredate,d.deptno from emp e,dept d where e.deptno!=all(select deptno from dept );
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+174.select e.ename,e.sal,nvl(e.comm,0) comm,(e.sal+nvl(e.comm,0)) netpay from emp e where (e.sal+nvl(e.comm,0)) > any(select (nvl(comm,0)+sal) from emp ); 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+175.select deptno from emp group by deptno having count(deptno)=(select max(count(deptno)) from emp group by deptno);
+----------------------------------------------------------------------------------------------------------------------------------------------
+176.select count(empno) from emp where lower(job) like 'manager';
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+177.select * from emp e where e.hiredate= any(select hiredate from emp f where e.hiredate=f.hiredate and e.empno!=f.empno);
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+178.select e.ename,e.job,e.sal,s.grade from emp e ,salgrade s where e.sal=(select sum(sal)/10 sum1 from emp,dept d1 where lower(d1.dname) like 'sales' and emp.deptno=d1.deptno)and (e.sal  between s.losal and s.hisal );
+------------------------------------------------------------------------------------------------------------------------------------
+179.select deptno from emp group by deptno having  count(deptno)>(select count(deptno)/count( distinct deptno) from emp);
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+180.select e.ename from emp e where e.sal< any(select sal from emp f  where f.mgr=e.empno) and lower(e.job) like 'manager' ;
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+181.select e.ename,e.job,e.hiredate,e.deptno, ( select ename from emp a where a.empno=e.mgr) mgr_name from emp e where e.mgr=(select empno from emp  f where lower(f.ename) like 'blake');
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+182.select e.ename,e.job,e.hiredate,e.deptno, ( select ename from emp a where a.empno=e.mgr) mgr_name from emp e where e.mgr=(select empno from emp  f where lower(f.ename) like 'jones');
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+183.select job from emp e where e.hiredate between '01-jan-1983' and '01-jun-1983' and e.hiredate between '01-jan-1984' and '01-jun-1984';
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+184.select *  from emp e where e.hiredate<(select hiredate from emp a where a.empno=e.mgr );
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+185.select ename,sal,nvl(comm,0) comm  from emp where sal=(select max(sal) from emp) and nvl(comm,0)>0;
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+186.select * from emp where deptno!=10 and upper(job) in( select job from emp where deptno=10) and sal=any(select sal from emp where deptno=10) ;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+187.select deptno,sal,ename,sal+comm netpay from emp where sal=(select max(sal) from emp) and comm is not null  and lower(job) like 'salesman' order by deptno desc; 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+188.select * from emp e where 2=(select  count(distinct p.sal+p.comm) from emp p where e.sal+e.comm<=p.sal+p.comm);             
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+189.select avg(sal),deptno from emp group by deptno having avg(sal)<(sum(sal)/count(distinct deptno)); 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+190.select * from emp p where p.sal=(select max(avg(e.sal)) from emp e group by e.deptno);
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+191.select * from emp e where upper(e.job) like(select job from emp a where lower(a.ename) like 'smith');
+---------------------------------------------------------------------------------------------------------------------------------------------
+192.select * from emp e where upper(e.job) like(select job from emp a where lower(a.ename) like 'allen') or e.sal>(select s.sal from emp s where lower(s.ename) like 'allen');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+193.select * from emp e where (sysdate-e.hiredate)>(select (sysdate-p.hiredate) from emp p where e.mgr=p.empno);
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+194.select * from emp e where e.sal>(select p.sal from emp p where lower(p.ename) like 'blake');
+----------------------------------------------------------------------------------------------------------------------------------------------------
+195.select * from emp e where upper(e.job) like(select job from emp a where lower(a.ename) like 'allen') and e.deptno=10;
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+196.select * from emp e where (sysdate-e.hiredate)>(select (sysdate-p.hiredate) from emp p where p.empno=e.empno and lower(p.ename) like 'king') and
+ (sysdate-e.hiredate)<(select (sysdate-s.hiredate) from emp s where s.empno=e.empno and lower(s.ename) like 'smith');
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+197.select * from emp e,salgrade s where e.sal between s.losal and s.hisal and s.grade>(select a.grade from emp d,salgrade a where d.sal between a.losal and
+a.hisal and lower(d.ename) like 'miller') ; 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+198.select * from emp e,salgrade s,dept d where(( d.deptno=e.deptno and lower(d.dname) in ('chicago','dallas') ) and (e.sal between s.losal and s.hisal and s.grade=(select a.grade from emp d,salgrade a where d.sal between a.losal and a.hisal and lower(d.ename) like 'adams'))) or ( (sysdate-hiredate)>(select (sysdate-p.hiredate) from emp p where lower(p.ename) like 'smith')); 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+199.select * from emp p where p.sal in( ( select sal from emp e where lower(e.ename) in ('ford','blake')));
+----------------------------------------------------------------------------------------------------------------------------------
+200.select * from emp e where e.sal=(select max(p.sal) from emp p);
+-------------------------------------------------------------------------------------------------------------------
+201.
+select * from emp e where e.hiredate between '09-sep-1981' and sysdate and e.deptno=30;
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+202.select ename from emp e,dept d where e.hiredate<any(select hiredate from emp e,salgrade s where e.hiredate between '09-feb-1982' and sysdate and (e.sal between s.losal and s.hisal and s.grade=2)) and e.sal=(select max(a.sal) from emp a,dept s where a.deptno=s.deptno and lower(s.dname) like 'chicago'); 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+203.select e.ename from emp e where e.sal=(select max(s.sal) from emp  s where s.mgr=(select empno from emp  a where lower(a.ename) like 'king')) and e.mgr=(select d.empno from emp d where lower(d.ename) like 'king') ;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+204.select * from emp e where lower(e.job) like 'manager';
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+205.select *  from emp a where exists(select b.empno from emp b where b.mgr=a.empno);
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+DDL/DML/TCL Commands
+
+206.create table EMPLOYEE(EmployeeID varchar2(10) primary key,EmployeeName varchar2(20) not null,Street varchar2(10),city varchar(10));
+          create table COMPANY(CompanyID varchar(10) primary key,ComapanyName varchar2(20) not null,city varchar2(10));
+
+          create table WORKS(workID varchar2(10) primary key,salary number,
+ FOREIGN KEY (EmployeeID)  references ,
+foreign key (CompanyID) references COMPANY(CompanyID));
+
+ALTER TABLE WORKS
+ADD FOREIGN KEY (EmployeeID) REFERENCES EMPLOYEE(EmployeeID);
+
+ALTER TABLE WORKS
+ADD FOREIGN KEY (CompanyID) REFERENCES COMPANY(CompanyID);
+
+
+
+
+
+
+JOINS
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+222.
+select d.dname,d.loc,d.deptno,e.ename,e.sal  from emp e,dept d where e.deptno=d.deptno(+) and (select count(p.deptno) from emp p where p.deptno=e.deptno)>=2;
+
+
+select d.dname,d.loc,d.deptno,e.ename,e.sal  from emp e left outer join dept d 
+on e.deptno=d.deptno and (select count(p.deptno) from emp p where p.deptno=e.deptno)>=2;
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+223.select  e.ename,e.empno,e.job,e.sal,d.dname from emp e,dept d where e.deptno=d.deptno;
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+224.select e.ename,e.deptno,e.sal,e.comm,d.loc from emp e,dept d where e.deptno=d.deptno and (e.sal between 2000 and 5000) and (lower(d.loc) like 'chicago'); 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+225.select e.ename,e.empno,e.job,e.sal,p.ename,p.sal,e.mgr,p.empno from emp e,emp p where  e.sal >p.sal and p.empno=e.mgr;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+226.select e.ename,e.empno,e.job,e.sal,p.ename mgr_name  from emp e,emp p where p.empno=e.mgr and lower(p.ename) like 'jones';
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+227.select e.ename,e.sal,s.grade from emp e,salgrade s where e.sal between s.losal and s.hisal and e.sal=(select max(p.sal) from emp p,salgrade t where t.grade=s.grade) and lower(e.ename) like 'ford';
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+228.select e.ename,e.job,d.dname,s.grade,e.deptno from emp e,dept d,salgrade s where e.deptno=d.deptno and e.sal between s.losal and s.hisal order by e.deptno; 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+229.select e.ename,e.job,d.dname,s.grade,e.deptno,e.sal from emp e,dept d,salgrade s where e.deptno=d.deptno and e.sal between s.losal and s.hisal and lower(e.job) not like 'clerk'  order by e.sal desc;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+230.select e.ename,e.job,e.sal*12 as annual_sal,e.deptno,d.dname s.grade from emp e,dept d,salgrade s where e.deptno=d.deptno and e.sal between s.losal and s.hisal  and e.sal*12>36000 and lower(e.job) not like 'clerk';
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+231.select e.ename,e.empno,p.empno as mgr_no ,p.ename  as mgr_name from emp e,emp p where p.empno(+)=e.mgr ;         
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+232.select e.ename,e.sal,p.ename as mgr_name,p.sal mgr_sal  from emp e,emp p where p.empno=e.mgr and e.sal>p.sal;         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+233.select e.ename,e.empno,e.job,e.sal,d.dname,d.loc from emp e ,dept d where e.deptno=d.deptno;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+234.select e.ename,e.ename,d.loc,d.dname,d.deptno from emp e,dept d where e.deptno=d.deptno and e.deptno in (10,20) order by deptno;
+ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+235.select e.ename,e.empno,e.deptno,e.sal,d.loc from emp e,dept d where e.deptno=d.deptno and (lower(d.loc) in ('chicago','dallas') and months_between(sysdate,e.hiredate)/12>6);
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+236.select e.ename,e.empno,e.deptno,e.sal,d.loc,e.hiredate from emp e,dept d where e.deptno=d.deptno and lower(d.loc) in ('newyork','dallas') and (e.sal between 2000 and 5000) and to_char(e.hiredate,'yy')='81';
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+237.Repeat
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+238.select e.ename,e.empno,e.job,e.sal,d.loc from emp e,dept d where e.deptno=d.deptno and lower(d.loc) like 'chicago';
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+239.select e.ename,e.empno,e.job,e.sal,d.loc,s.grade from emp e,dept d,salgrade s where e.deptno=d.deptno and  (e.sal between s.losal and s.hisal) and lower(d.loc) like 'chicago' ;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+240.select d.loc,s.grade,d.dname from emp e,dept d,salgrade s where e.deptno=d.deptno and(( lower(d.dname) like 'accounting' and e.sal between s.losal and s.hisal )or (lower(d.loc) in ('dallas','chicago') and s.grade in (3,5) and months_between(sysdate,e.hiredate)/12>6));
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+241.select e.ename,e.empno,e.job,e.sal,d.dname,e.hiredate,s.grade from emp e,dept d,salgrade s where e.sal between s.losal and s.hisal and s.grade=3 and lower(d.dname) in ('research','operations')and to_char(hiredate,'yyyy')>'1981' and lower(e.ename) not in ('miller','allen') and e.deptno=d.deptno; 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+242.select e.ename,e.empno,d.loc,d.dname,e.sal from emp e,dept d where e.deptno=d.deptno and e.deptno=(select deptno from emp where lower(ename) like 'king');
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+select o.ord_num,o.cust_code,c.cust_name,c.cust_city,a.agent_code from customer c join c.cust_code=o.cust_code join 
+
+
+select  i.item_name,i.item_unit,c.company_name,c.company_city from item i join company c on i.company_id=c.company_id;
